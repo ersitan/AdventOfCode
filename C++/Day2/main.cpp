@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "../utils.hpp"
 
 class Game {
     int gameNo_, blueCount_, redCount_, greenCount_;

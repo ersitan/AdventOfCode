@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "../utils.hpp"
 
 int replaceDigits(std::string& str, std::map<std::string, char>& map) {
     std::string output;

@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "../utils.hpp"
 
 class Numbers {
     int lineNo_;
@@ -16,8 +16,16 @@ Numbers::Numbers(int &lineNo, size_t &pos, std::string &sNumber)
 int assignment1() {
     std::ifstream myFile("input.txt");
     std::string line;
+    int pos;
 
-    while (std::getline(myFile, line)) {
+    while (myFile >> line) {
+      for(auto &c: line){
+        if (isdigit(c)){
+          
+        }
+      }
+      pos = line.find_first_of()
+      std::cout<<line<<std::endl;
     }
 }
 
@@ -31,6 +39,6 @@ int assignment2() {
 
 int main() {
     std::cout << assignment1() << std::endl;
-    std::cout << assignment2() << std::endl;
+    // std::cout << assignment2() << std::endl;
     return 0;
 }
