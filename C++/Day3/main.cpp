@@ -1,31 +1,58 @@
 #include "../utils.hpp"
 
 class Numbers {
-    int lineNo_;
+    unsigned int lineNo_;
     size_t pos_;
-    std::string sNumber_;
+    int iNumber_;
 
    public:
-    Numbers(int &, size_t &, std::string &);
+    Numbers(unsigned int &, size_t &, int);
     ~Numbers() = default;
 };
 
-Numbers::Numbers(int &lineNo, size_t &pos, std::string &sNumber)
-    : lineNo_(lineNo), pos_(pos), sNumber_(sNumber) {}
+class Chars {
+    unsigned int lineNo_;
+    size_t pos_;
+    char char_;
 
-int assignment1() {
+   public:
+    Chars(unsigned int &, size_t &, char &);
+    ~Chars() = default;
+};
+
+Numbers::Numbers(unsigned int &lineNo, size_t &pos, int iNumber)
+    : lineNo_(lineNo), pos_(pos), iNumber_(iNumber) {}
+
+Chars::Chars(unsigned int &lineNo, size_t &pos, char &_char)
+    : lineNo_(lineNo), pos_(pos), char_(_char) {}
+
+void assignment1() {
     std::ifstream myFile("input.txt");
     std::string line;
-    int pos;
-
+    size_t pos = 0;
+    unsigned int lineNo = 0;
+    std::vector<Numbers> vNumbers;
+    std::vector<Chars> vChars;
     while (myFile >> line) {
-      for(auto &c: line){
-        if (isdigit(c)){
-          
+        lineNo++;
+        for (auto i = line.begin(); i != line.end(); i++) {
+            pos = std::distance(line.begin(), i);
+            if (isdigit(*i)) {
+                size_t nonDigitPos =
+                    line.find_first_not_of("0123456789", pos + 1);
+                if (nonDigitPos != std::string::npos) {
+                    std::string digit = line.substr(pos, nonDigitPos - pos);
+                    std::advance(i, nonDigitPos - pos);
+                    std::unique_ptr<Numbers> pNumbers(
+                        new Numbers(lineNo, pos, std::stoi(digit)));
+                    vNumbers.push_back(*pNumbers);
+                }
+            } else if (*i != '.') {
+                char temp = *i;
+                std::unique_ptr<Chars> pChar(new Chars(lineNo, pos, *i));
+                vChars.push_back(*pChar);
+            }
         }
-      }
-      pos = line.find_first_of()
-      std::cout<<line<<std::endl;
     }
 }
 
@@ -38,7 +65,7 @@ int assignment2() {
 }
 
 int main() {
-    std::cout << assignment1() << std::endl;
+    assignment1();
     // std::cout << assignment2() << std::endl;
     return 0;
 }
