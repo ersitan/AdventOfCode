@@ -55,11 +55,14 @@ void assignment1() {
                 size_t nonDigitPos = line.find_first_not_of(
                     "0123456789",
                     pos);  // find the first non-digit char after the digit
-                           // so that we know the size of the found digit.
+                // so that we know the size of the found digit.
+                std::string digit = line.substr(pos, nonDigitPos - pos);
+                vNumbers.push_back(Numbers(lineNo, pos, digit));
                 if (nonDigitPos != std::string::npos) {
-                    std::string digit = line.substr(pos, nonDigitPos - pos);
-                    std::advance(i, nonDigitPos - pos);
-                    vNumbers.push_back(Numbers(lineNo, pos, digit));
+                    std::advance(i, digit.length());
+                } else {  // last digit in the line, no need to search for the
+                          // next
+                    break;
                 }
             }
             if (!isdigit(*i) &&
@@ -83,20 +86,25 @@ void assignment1() {
             if (digitLine == charLine) {
                 if (digitPos + digitLenght == charPos ||
                     digitPos - 1 == charPos) {
-                    /*std::cout << "Found ADJECENT: " << digitDigit << '('
-                    << digitPos << ')' << " " << charChar << '(' << charPos
-                    << ')' << "in line " << digitLine << std::endl;*/
+                    std::cout << "Found ADJECENT: " << digitDigit <<
+                        //'(' << digitPos << ')' <<
+                        " and " << charChar <<
+                        //'(' << charPos << ')' <<
+                        " in line " << digitLine << std::endl;
                     count += stoi(digitDigit);
+                    break;
                 }
             } else if (digitLine + 1 == charLine || digitLine - 1 == charLine) {
                 for (int i = digitPos - 1; i < digitPos + digitLenght + 1;
                      i++) {
                     if (i == charPos) {
-                        /* std::cout << "Found ADJECENT: " << digitDigit << '('
-                        << digitPos << ')' << "in line " << digitLine << " "
-                        << charChar << '(' << charPos << ')' << "in line "
-                        << charLine << std::endl;*/
+                        std::cout << "Found ADJECENT: " << digitDigit <<
+                            //'(' << digitPos << ')' <<
+                            " in line " << digitLine << ", " << charChar <<
+                            //'(' << charPos << ')' <<
+                            " in line " << charLine << std::endl;
                         count += stoi(digitDigit);
+                        break;
                     }
                 }
             }
