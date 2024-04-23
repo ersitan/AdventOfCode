@@ -1,36 +1,6 @@
 #include "../utils.hpp"
-
-class Numbers {
-    unsigned int lineNo_;
-    size_t pos_;
-    std::string sNumber_;
-
-   public:
-    Numbers(unsigned int &, size_t &, std::string &);
-    ~Numbers() = default;
-
-    int getLine() { return lineNo_; }
-
-    int getPos() { return pos_; }
-
-    std::string getNumber() { return sNumber_; }
-};
-
-class Chars {
-    unsigned int lineNo_;
-    size_t pos_;
-    char char_;
-
-   public:
-    Chars(unsigned int &, size_t &, char &);
-    ~Chars() = default;
-
-    int getLine() { return lineNo_; }
-
-    int getPos() { return pos_; }
-
-    char getChar() { return char_; }
-};
+#include "chars.hpp"
+#include "numbers.hpp"
 
 Numbers::Numbers(unsigned int &lineNo, size_t &pos, std::string &sNumber)
     : lineNo_(lineNo), pos_(pos), sNumber_(sNumber) {}
@@ -152,22 +122,11 @@ void find_left_digit(std::string &line, unsigned int &lineNo) {
     }
 }
 
-void assignment2() {
-    /*std::ifstream myFile("input.txt");
-    std::string line;
-    unsigned int lineNo = 0;
-
-    while (myFile >> line) {
-        lineNo++;
-        //find_right_digit(line, lineNo);
-        //find_left_digit(line, lineNo);
-    }*/
+void getVectors(std::vector<Numbers>& vNumbers, std::vector<Chars> &vChars) {
     std::ifstream myFile("input.txt");
     std::string line;
     size_t pos = 0;
     unsigned int lineNo = 0, count = 0;
-    std::vector<Numbers> vNumbers;
-    std::vector<Chars> vChars;
     while (myFile >> line) {
         lineNo++;
         for (auto i = line.begin(); i != line.end(); i++) {
@@ -196,18 +155,33 @@ void assignment2() {
             }
         }
     }
+}
+/*std::ifstream myFile("input.txt");
+std::string line;
+unsigned int lineNo = 0;
 
+while (myFile >> line) {
+    lineNo++;
+    //find_right_digit(line, lineNo);
+    //find_left_digit(line, lineNo);
+}*/
+
+void assignment2() {
+    std::vector<Numbers> vNumbers;
+    std::vector<Chars> vChars;
+    getVectors(vNumbers, vChars);
+    
     for (auto &c : vChars) {
         if (c.getChar() == '*') {
-            for (auto &d : vNumbers) {
-                if (((c.getPos() - d.getNumber().length() == d.getPos()) ||
-                     (d.getPos() - 1 == c.getPos())) &&
-                    c.getLine() == d.getLine()) {
-                    std::cout << "LINE " << c.getLine() << ": " << d.getNumber()
-                              << " " << c.getChar() << std::endl;
-                    break;
-                }
-            }
+            // for (auto &d : vNumbers) {
+            //     if (((c.getPos() - d.getNumber().length() == d.getPos()) ||
+            //          (d.getPos() - 1 == c.getPos())) &&
+            //         c.getLine() == d.getLine()) {
+            //         std::cout << "LINE " << c.getLine() << ": " << d.getNumber()
+            //                   << " " << c.getChar() << std::endl;
+            //         break;
+            //     }
+            // }
         }
     }
 }
