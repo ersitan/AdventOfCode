@@ -12,9 +12,9 @@ class Chars {
     Chars(unsigned int &, size_t &, char &);
     ~Chars() = default;
 
-    int getLine() { return lineNo_; }
+    unsigned int getLine() { return lineNo_; }
 
-    int getPos() { return pos_; }
+    size_t getPos() { return pos_; }
 
     char getChar() { return char_; }
 };

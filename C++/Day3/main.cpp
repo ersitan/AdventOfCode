@@ -2,12 +2,6 @@
 #include "chars.hpp"
 #include "numbers.hpp"
 
-Numbers::Numbers(unsigned int &lineNo, size_t &pos, std::string &sNumber)
-    : lineNo_(lineNo), pos_(pos), sNumber_(sNumber) {}
-
-Chars::Chars(unsigned int &lineNo, size_t &pos, char &_char)
-    : lineNo_(lineNo), pos_(pos), char_(_char) {}
-
 void assignment1() {
     std::ifstream myFile("input.txt");
     std::string line;
@@ -122,7 +116,7 @@ void find_left_digit(std::string &line, unsigned int &lineNo) {
     }
 }
 
-void getVectors(std::vector<Numbers>& vNumbers, std::vector<Chars> &vChars) {
+void getVectors(std::vector<Numbers> &vNumbers, std::vector<Chars> &vChars) {
     std::ifstream myFile("input.txt");
     std::string line;
     size_t pos = 0;
@@ -156,28 +150,31 @@ void getVectors(std::vector<Numbers>& vNumbers, std::vector<Chars> &vChars) {
         }
     }
 }
-/*std::ifstream myFile("input.txt");
-std::string line;
-unsigned int lineNo = 0;
-
-while (myFile >> line) {
-    lineNo++;
-    //find_right_digit(line, lineNo);
-    //find_left_digit(line, lineNo);
-}*/
 
 void assignment2() {
     std::vector<Numbers> vNumbers;
     std::vector<Chars> vChars;
     getVectors(vNumbers, vChars);
-    
+
     for (auto &c : vChars) {
         if (c.getChar() == '*') {
+            size_t posChar = c.getPos();
+            unsigned int lineChar = c.getLine();
+            auto it =
+                std::find_if(vNumbers.begin(), vNumbers.end(), [&](Numbers &n) {
+                    return (n.getLine() == lineChar) &&
+                           (n.getPos() + n.getNumber().length() == posChar);
+                });
+            if (it->getNumber() != "") {
+                std::cout << "Found " << it->getNumber()
+                          << " on the left side of *" << std::endl;
+            }
             // for (auto &d : vNumbers) {
             //     if (((c.getPos() - d.getNumber().length() == d.getPos()) ||
             //          (d.getPos() - 1 == c.getPos())) &&
             //         c.getLine() == d.getLine()) {
-            //         std::cout << "LINE " << c.getLine() << ": " << d.getNumber()
+            //         std::cout << "LINE " << c.getLine() << ": " <<
+            //         d.getNumber()
             //                   << " " << c.getChar() << std::endl;
             //         break;
             //     }

@@ -12,9 +12,9 @@ class Numbers {
     Numbers(unsigned int &, size_t &, std::string &);
     ~Numbers() = default;
 
-    int getLine() { return lineNo_; }
+    unsigned int getLine() { return lineNo_; }
 
-    int getPos() { return pos_; }
+    size_t getPos() { return pos_; }
 
     std::string getNumber() { return sNumber_; }
 };
