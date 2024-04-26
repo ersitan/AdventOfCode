@@ -77,45 +77,6 @@ void assignment1() {
     std::cout << count << std::endl;
 }
 
-void find_right_digit(std::string &line, unsigned int &lineNo) {
-    size_t posStar = line.find('*');
-    while (posStar != std::string::npos) {
-        size_t posDigitRight = line.find_first_of("0123456789", posStar);
-        if (posDigitRight - 1 == posStar) {
-            {
-                size_t nonDigitAfterRightDigit =
-                    line.find_first_not_of("0123456789", posDigitRight);
-                std::string rightDigit = line.substr(
-                    posDigitRight, nonDigitAfterRightDigit - posDigitRight);
-                std::cout << "LINE NO " << lineNo << ": FOUND " << rightDigit
-                          << " ON THE RIGHT" << std::endl;
-            }
-        }
-
-        posStar = line.find('*', posStar + 1);
-    }
-}
-
-void find_left_digit(std::string &line, unsigned int &lineNo) {
-    auto posStar = line.rfind('*');
-    while (posStar != std::string::npos) {
-        size_t posDigitLeft = line.find_last_of("0123456789", posStar);
-        if (posDigitLeft + 1 == posStar) {
-            {
-                size_t nonDigitAfterLeftDigit =
-                    line.find_last_not_of("0123456789", posDigitLeft);
-                std::string leftDigit =
-                    line.substr(nonDigitAfterLeftDigit + 1,
-                                posDigitLeft - nonDigitAfterLeftDigit);
-                std::cout << "LINE NO " << lineNo << ": FOUND " << leftDigit
-                          << " IN THE LEFT" << std::endl;
-            }
-        }
-
-        posStar = line.rfind('*', posStar - 1);
-    }
-}
-
 void getVectors(std::vector<Numbers> &vNumbers, std::vector<Chars> &vChars) {
     std::ifstream myFile("input.txt");
     std::string line;
@@ -155,32 +116,78 @@ void assignment2() {
     std::vector<Numbers> vNumbers;
     std::vector<Chars> vChars;
     getVectors(vNumbers, vChars);
-
+    long long adjecentDigit = 0;
     for (auto &c : vChars) {
         if (c.getChar() == '*') {
             size_t posChar = c.getPos();
             unsigned int lineChar = c.getLine();
-            auto it =
+            int tempAdjecentDigit = 1;
+            std::vector<int> numbersToMultiply;
+            auto itLeftDigit =
                 std::find_if(vNumbers.begin(), vNumbers.end(), [&](Numbers &n) {
                     return (n.getLine() == lineChar) &&
                            (n.getPos() + n.getNumber().length() == posChar);
                 });
-            if (it->getNumber() != "") {
-                std::cout << "Found " << it->getNumber()
-                          << " on the left side of *" << std::endl;
+
+            auto itRightDigit =
+                std::find_if(vNumbers.begin(), vNumbers.end(), [&](Numbers &n) {
+                    return (n.getLine() == lineChar) &&
+                           (n.getPos() - 1 == posChar);
+                });
+
+            auto itTopDigit =
+                std::find_if(vNumbers.begin(), vNumbers.end(), [&](Numbers &n) {
+                    return (n.getLine() == lineChar - 1) &&
+                           ((n.getPos() >= posChar - n.getNumber().length()) &&
+                            (n.getPos() <= posChar + 1));
+                });
+
+            auto itBottomDigit =
+                std::find_if(vNumbers.begin(), vNumbers.end(), [&](Numbers &n) {
+                    return (n.getLine() == lineChar + 1) &&
+                           ((n.getPos() >= posChar - n.getNumber().length()) &&
+                            (n.getPos() <= posChar + 1));
+                });
+
+            while (itTopDigit != vNumbers.end()) {
+                numbersToMultiply.push_back(stoi(itTopDigit->getNumber()));
+                itTopDigit = std::find_if(
+                    std::next(itTopDigit), vNumbers.end(), [&](Numbers &n) {
+                        return (n.getLine() == lineChar - 1) &&
+                               ((n.getPos() >=
+                                 posChar - n.getNumber().length()) &&
+                                (n.getPos() <= posChar + 1));
+                    });
             }
-            // for (auto &d : vNumbers) {
-            //     if (((c.getPos() - d.getNumber().length() == d.getPos()) ||
-            //          (d.getPos() - 1 == c.getPos())) &&
-            //         c.getLine() == d.getLine()) {
-            //         std::cout << "LINE " << c.getLine() << ": " <<
-            //         d.getNumber()
-            //                   << " " << c.getChar() << std::endl;
-            //         break;
-            //     }
-            // }
+
+            while (itBottomDigit != vNumbers.end()) {
+                numbersToMultiply.push_back(stoi(itBottomDigit->getNumber()));
+                itBottomDigit = std::find_if(
+                    std::next(itBottomDigit), vNumbers.end(), [&](Numbers &n) {
+                        return (n.getLine() == lineChar + 1) &&
+                               ((n.getPos() >=
+                                 posChar - n.getNumber().length()) &&
+                                (n.getPos() <= posChar + 1));
+                    });
+            }
+
+            if (itLeftDigit != vNumbers.end()) {
+                numbersToMultiply.push_back(stoi(itLeftDigit->getNumber()));
+            }
+
+            if (itRightDigit != vNumbers.end()) {
+                numbersToMultiply.push_back(stoi(itRightDigit->getNumber()));
+            }
+
+            if (numbersToMultiply.size() == 2) {
+                for (int &num : numbersToMultiply) {
+                    tempAdjecentDigit *= num;
+                }
+                adjecentDigit += tempAdjecentDigit;
+            }
         }
     }
+    std::cout << adjecentDigit;
 }
 
 int main() {
