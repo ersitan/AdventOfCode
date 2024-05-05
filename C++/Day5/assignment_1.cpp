@@ -42,10 +42,10 @@ void getMaps(std::ifstream& file,
 }
 
 void generateMaps(myMap& mMap, std::string& key) {
-    std::map<std::string, std::pair<int, int>> myMap;
-    std::array<int, 100> values{0};
+    std::map<std::string, std::pair<int, int>> tempMap;
+    int values[100]{0};
     auto it = mMap.find(key);
-    //std::vector<int, int> vec;
+    //std::vector<std::vector<int, int>> vec;
     if (it != mMap.end()) {
         for (auto& e : it->second) {
             int source = e[1];
@@ -55,6 +55,11 @@ void generateMaps(myMap& mMap, std::string& key) {
                 values[source + i] = destination + i;
             }
             // std::cout<<"de";
+        }
+    }
+    for(int k = 0; k<100; k++){
+        if (values[k] == 0){
+            values[k] = k;
         }
     }
 }
