@@ -10,4 +10,5 @@
 #include <vector>
 #include <functional>
 #include <cmath>
+#include <limits>
 #endif  // UTILS_H
