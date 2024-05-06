@@ -25,7 +25,7 @@ void getMaps(std::ifstream& file,
         findKey(key, line);
         while (iss >> word) {
             if (std::isdigit(word[0])) {
-                vNumbers.push_back(std::stoll(word));
+                vNumbers.push_back(std::stoull(word));
             }
         }
 
@@ -61,9 +61,9 @@ std::vector<std::pair<uint64_t,uint64_t>> generateMappedVector(myMap& mMap, std:
 }
 
 uint64_t getValueFromMap(const uint64_t& elem,
-                    std::map<std::string, std::vector<std::pair<uint64_t,uint64_t>>>& myMap,
+                    std::map<std::string, std::vector<std::pair<uint64_t,uint64_t>>>& map_,
                     std::string& keyword) {
-    auto it1 = std::find_if(myMap.begin(), myMap.end(), [&](const auto& tmp) {
+    auto it1 = std::find_if(map_.begin(), map_.end(), [&](const auto& tmp) {
         return (tmp.first == keyword);
     });
     for (auto &e: it1->second){
