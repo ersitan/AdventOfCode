@@ -14,13 +14,20 @@ void findKey(std::string& key, std::string& line) {
     }
 }
 
-void getMaps(std::ifstream& file,
-             std::map<std::string, std::vector<std::vector<uint64_t>>>& mMap) {
+void sortValues(myMap& map) {
+    for (auto& elem : map) {
+        std::sort(elem.second.begin(), elem.second.end(),
+                  [](auto& left, auto& right) { return left[1] < right[1]; });
+    }
+}
+
+void readFileIntoMap(myMap& mMap) {
+    std::ifstream myFile("input.txt");
     std::string line, key, word;
     std::vector<uint64_t> vNumbers;
     std::vector<std::vector<uint64_t>> vValue;
 
-    while (std::getline(file, line)) {
+    while (std::getline(myFile, line)) {
         std::istringstream iss(line);
         findKey(key, line);
         while (iss >> word) {
@@ -34,48 +41,38 @@ void getMaps(std::ifstream& file,
             vNumbers.clear();
         }
 
-        if (!line.size() || file.eof()) {
+        if (!line.size() || myFile.eof()) {
             mMap[key] = vValue;
             vValue.clear();
         }
     }
 }
 
-std::vector<std::pair<uint64_t,uint64_t>> generateMappedVector(myMap& mMap, std::string& key) {
-    std::vector<std::pair<uint64_t,uint64_t>> values;
-    auto it = mMap.find(key);
-    if (it != mMap.end()) {
-        /*for (uint64_t k = 0; k < std::numeric_limits<uint64_t>::max(); k++) {
-            values.push_back(k);
-        }*/
-        for (auto& e : it->second) {
-            uint64_t source = e[1];
-            uint64_t destination = e[0];
-            uint64_t length = e[2];
-            for (uint64_t i = 0; i < length; i++) {
-                values.push_back(std::make_pair(source + i, destination + i));
-            }
+uint64_t findLocation(const uint64_t& input, myMap& mMap,
+                 std::string& key) {
+    int res = 0;
+    auto vec = mMap.at(key);
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i][1] < input && input < vec[i][1] + vec[i][2]) {
+            return input + (vec[i][0] - vec[i][1]);
         }
     }
-    return values;
+    return input;
 }
 
-uint64_t getValueFromMap(const uint64_t& elem,
-                    std::map<std::string, std::vector<std::pair<uint64_t,uint64_t>>>& map_,
-                    std::string& keyword) {
-    auto it1 = std::find_if(map_.begin(), map_.end(), [&](const auto& tmp) {
-        return (tmp.first == keyword);
-    });
-    for (auto &e: it1->second){
-        if(e.first == elem){
-            return e.second;
+std::vector<uint64_t> seperateSeeds(myMap& map) {
+    std::vector<uint64_t> seedVec;
+    auto it = map.find("seeds");
+    if (it != map.end()) {
+        for (const uint64_t& elements : it->second[0]) {
+            seedVec.push_back(elements);
         }
+        map.erase(it);
     }
-    return elem;
+    return seedVec;
 }
 
 int main() {
-    std::ifstream myFile("input2.txt");
     std::string sSeedToSoil = "seed-to-soil";
     std::string sSoilToFertilizer = "soil-to-fertilizer";
     std::string sFertilizerToWater = "fertilizer-to-water";
@@ -84,33 +81,22 @@ int main() {
     std::string sTempToHum = "temperature-to-humidity";
     std::string sHumToLoc = "humidity-to-location";
     myMap mMap;
-    std::map<std::string, std::vector<std::pair<uint64_t,uint64_t>>> sortedMap;
-    std::vector<uint64_t> vec;
-    getMaps(myFile, mMap);
-    for (const auto& m : mMap) {
-        std::string key = m.first;
-        if (key.find("seeds") == std::string::npos) {
-            std::vector<std::pair<uint64_t,uint64_t>> myArray = generateMappedVector(mMap, key);
-            sortedMap[key] = myArray;
-        }
-    }
 
-    auto it = mMap.find("seeds");
-    if (it != mMap.end()) {
-        for (const uint64_t& elem : it->second[0]) {
-            uint64_t soil = getValueFromMap(elem, sortedMap, sSeedToSoil);
-            uint64_t fertilizer =
-                getValueFromMap(soil, sortedMap, sSoilToFertilizer);
-            uint64_t water =
-                getValueFromMap(fertilizer, sortedMap, sFertilizerToWater);
-            uint64_t light = getValueFromMap(water, sortedMap, sWaterToLight);
-            uint64_t temperature = getValueFromMap(light, sortedMap, sLightToTemp);
-            uint64_t hum = getValueFromMap(temperature, sortedMap, sTempToHum);
-            uint64_t loc = getValueFromMap(hum, sortedMap, sHumToLoc);
-            vec.push_back(loc);
-        }
-    }
-    std::cout << *std::min_element(vec.begin(), vec.end());
+    readFileIntoMap(mMap);
+    std::vector<uint64_t> seedsVec = seperateSeeds(mMap), locationVector;
+    sortValues(mMap);
 
+    for(uint64_t& seed: seedsVec){
+        uint64_t soil = findLocation(seed, mMap, sSeedToSoil);
+        uint64_t fertilizer = findLocation(soil, mMap, sSoilToFertilizer);
+        uint64_t water = findLocation(fertilizer, mMap, sFertilizerToWater);
+        uint64_t light = findLocation(water, mMap, sWaterToLight);
+        uint64_t temp = findLocation(light, mMap, sLightToTemp);
+        uint64_t humidity = findLocation(temp, mMap, sTempToHum);
+        uint64_t location = findLocation(humidity, mMap, sHumToLoc);
+        locationVector.push_back(location);
+    }
+    
+    std::cout<< *std::min_element(locationVector.begin(), locationVector.end()) << std::endl;
     return 0;
 }
