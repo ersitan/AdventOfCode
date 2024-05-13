@@ -11,37 +11,24 @@ enum Types : int {
     fiveOfAKind
 };
 
-enum Cards : int {
-    two = 2,
-    three,
-    four,
-    five,
-    six,
-    seven,
-    eight,
-    nine,
-    T = 10,
-    J,
-    Q,
-    K
-};
+std::map<char, int> mCards = {
+    {'2', 2}, {'3', 3},  {'4', 4},  {'5', 5},  {'6', 6},  {'7', 7}, {'8', 8},
+    {'9', 9}, {'T', 10}, {'J', 11}, {'Q', 12}, {'K', 13}, {'A', 14}};
 
-class Hands {
-    int rank_ = 0;
-    std::string value_ = "";
+class Hand {
+    std::string cards_ = "";
     int bid_ = 0;
     Types type_;
 
    public:
-    Hands(std::string val, int bid) : value_(val), bid_(bid) {};
-    ~Hands() = default;
+    Hand(std::string cards, int bid) : cards_(cards), bid_(bid){};
+    ~Hand() = default;
 
-    int getRank() { return rank_; }
-    std::string getCards() { return value_;}
-    void setType(Types t){type_ = t;}
+    std::string getCards() { return cards_; }
+    int getBid() { return bid_; }
+    Types& getType() { return type_; }
+    void setType(const Types& t) { type_ = t; }
 
-    bool operator<(Hands& other){
-        return this->type_ < other.type_;
-    }
+    bool operator<(Hand& other) { return this->type_ < other.type_; }
+    bool operator==(Hand& other) { return this->type_ == other.type_; }
 };
-
