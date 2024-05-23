@@ -11,4 +11,5 @@
 #include <functional>
 #include <cmath>
 #include <limits>
+#include <ranges>
 #endif  // UTILS_H
