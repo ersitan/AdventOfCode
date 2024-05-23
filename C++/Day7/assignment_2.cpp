@@ -1,6 +1,18 @@
 #include "ReadFile.hpp"
 #include "includes.hpp"
 
+std::pair<char, int> getPairWithLargestValue(std::map<char, int>& cardMap) {
+    auto res = std::pair<char, int>(' ', 0);
+    for (auto& p : cardMap) {
+        if (p.first != 'J') {
+            if (p.second > res.second) {
+                res = p;
+            }
+        }
+    }
+    return res;
+}
+
 void setTypes(Hand& hand) {
     std::map<char, int> cardMap;
     for (const auto& card : hand.getCards()) {
@@ -11,6 +23,13 @@ void setTypes(Hand& hand) {
         }
     }
 
+    auto it = cardMap.find('J');
+    if (it != cardMap.end()) {
+        auto largestPair = getPairWithLargestValue(cardMap);
+        largestPair.second += it->second;
+        cardMap.erase(it);
+        cardMap[largestPair.first] = largestPair.second;
+    }
     auto valueView = std::views::values(cardMap);  // c++20
     std::vector<int> vValues{valueView.begin(), valueView.end()};
 
@@ -68,7 +87,7 @@ bool sortSameTypes(Hand& left, Hand& right) {
 }
 
 int main() {
-    ReadFile rf("input2.txt");
+    ReadFile rf("input.txt");
     std::vector<std::string> vec = rf.getLinesVector();
     int i = 1;
     int result = 0;
@@ -121,7 +140,7 @@ int main() {
     std::sort(vTwoPair.begin(), vTwoPair.end(), sortSameTypes);
     std::sort(vOnePair.begin(), vOnePair.end(), sortSameTypes);
     std::sort(vHighCard.begin(), vHighCard.end(), sortSameTypes);
-    
+
     vHands.clear();
     vHands.insert(vHands.begin(), vHighCard.begin(), vHighCard.end());
     vHands.insert(vHands.begin(), vOnePair.begin(), vOnePair.end());
