@@ -41,7 +41,9 @@ void updateSearchVector(std::vector<Network>& vNetwork,
 }
 
 int main() {
-    ReadFile rf("input.txt");
+    std::chrono::time_point<std::chrono::system_clock> now =
+        std::chrono::system_clock::now();
+    ReadFile rf("input2.txt");
     std::vector<std::string> vec = rf.getLinesVector();
     std::vector<Network> vNetwork, vNetworkWithEndingA, searchVector;
     std::string directions = vec[0];
@@ -68,7 +70,8 @@ int main() {
         for (auto& item : vSearchNode) {
             std::cout << item << ' ';
         }
-        std::cout<<std::endl;
+        std::cout << std::endl;
+        std::cout << count << std::endl;
         vSearchNode.clear();
         count++;
 
@@ -80,6 +83,11 @@ int main() {
     }
 
 found:
+    std::chrono::time_point<std::chrono::system_clock> end =
+        std::chrono::system_clock::now();
+
+    auto minutes = std::chrono::duration_cast<std::chrono::minutes>(end - now).count();
+    std::cout << "It took " << minutes << " minutes" << std::endl;
     std::cout << count << std::endl;
     return 0;
 }

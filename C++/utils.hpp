@@ -12,4 +12,5 @@
 #include <cmath>
 #include <limits>
 #include <ranges>
+#include <chrono>
 #endif  // UTILS_H
