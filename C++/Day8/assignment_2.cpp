@@ -1,4 +1,31 @@
 #include "includes.hpp"
+#include <bits/stdc++.h>
+
+typedef long long int ll;
+ 
+// Utility function to find
+// GCD of 'a' and 'b'
+int gcd(int a, int b)
+{
+    if (b == 0)
+        return a;
+    return gcd(b, a % b);
+}
+ 
+// Returns LCM of array elements
+ll findlcm(std::vector<int> arr, int n)
+{
+    // Initialize result
+    ll ans = arr[0];
+ 
+    // ans contains LCM of arr[0], ..arr[i]
+    // after i'th iteration,
+    for (int i = 1; i < n; i++)
+        ans = (((arr[i] * ans)) /
+                (gcd(arr[i], ans)));
+ 
+    return ans;
+}
 
 void createNetworkVector(std::vector<std::string>& vec,
                          std::vector<Network>& vNetwork) {
@@ -41,9 +68,7 @@ void updateSearchVector(std::vector<Network>& vNetwork,
 }
 
 int main() {
-    std::chrono::time_point<std::chrono::system_clock> now =
-        std::chrono::system_clock::now();
-    ReadFile rf("input2.txt");
+    ReadFile rf("input.txt");
     std::vector<std::string> vec = rf.getLinesVector();
     std::vector<Network> vNetwork, vNetworkWithEndingA, searchVector;
     std::string directions = vec[0];
@@ -51,43 +76,43 @@ int main() {
         vec,
         vNetwork);  // Network objects are created and pushed into a vector.
     createVectorWithEndingA(vNetwork, vNetworkWithEndingA);
-    searchVector = vNetworkWithEndingA;
-    int count = 0;
-    std::vector<std::string> vSearchNode;
-    for (auto it = directions.begin();; it++) {
-        if (it == directions.end()) {
-            it = directions.begin();
-        }
 
-        for (auto& n : searchVector) {
-            if (*it == 'R') {
-                vSearchNode.push_back(n.getRight());
+    int count = 0;
+    ll result;
+    std::vector<std::string> vSearchNode;
+    auto NetworkIt = vNetwork.begin();
+    std::vector<int> vCount;
+    for (size_t i = 0; i < vNetworkWithEndingA.size(); i++) {
+        Network network = vNetworkWithEndingA[i];
+        for (auto dirIt = directions.begin();; dirIt++) {
+            if (dirIt == directions.end()) {
+                dirIt = directions.begin();
+            }
+
+            if (*dirIt == 'R') {
+                NetworkIt = std::find_if(
+                    vNetwork.begin(), vNetwork.end(), [&](Network& n) {
+                        return n.getNode() == network.getRight();
+                    });
             } else {
-                vSearchNode.push_back(n.getLeft());
+                NetworkIt = std::find_if(
+                    vNetwork.begin(), vNetwork.end(), [&](Network& n) {
+                        return n.getNode() == network.getLeft();
+                    });
+            }
+
+            count++;
+            network = *NetworkIt;
+            if (NetworkIt->getNode().back() == 'Z') {
+                dirIt = directions.begin();
+                vCount.push_back(count);
+                count = 0;
+                break;
             }
         }
-        updateSearchVector(vNetwork, searchVector, vSearchNode);
-        for (auto& item : vSearchNode) {
-            std::cout << item << ' ';
-        }
-        std::cout << std::endl;
-        std::cout << count << std::endl;
-        vSearchNode.clear();
-        count++;
-
-        if (std::all_of(searchVector.begin(), searchVector.end(),
-                        [](Network& n) { return n.getNode().back() == 'Z'; })) {
-            bool found = true;
-            goto found;
-        }
     }
+    result = findlcm(vCount, vCount.size()); 
 
-found:
-    std::chrono::time_point<std::chrono::system_clock> end =
-        std::chrono::system_clock::now();
-
-    auto minutes = std::chrono::duration_cast<std::chrono::minutes>(end - now).count();
-    std::cout << "It took " << minutes << " minutes" << std::endl;
-    std::cout << count << std::endl;
+    std::cout << result << std::endl;
     return 0;
 }
