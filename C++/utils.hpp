@@ -12,4 +12,5 @@
 #include <cmath>
 #include <limits>
 #include <ranges>
+#include <numeric>
 #endif  // UTILS_H
