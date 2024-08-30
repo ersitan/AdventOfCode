@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Projects/AdventOfCode/C++/Day7",
-      "program": "c:/Projects/AdventOfCode/C++/Day7/build/Debug/outDebug",
+      "cwd": "c:/Users/NLET2/AdventofCode/AdventOfCode/C++/Day10",
+      "program": "c:/Users/NLET2/AdventofCode/AdventOfCode/C++/Day10/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
